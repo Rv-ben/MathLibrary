@@ -1,13 +1,9 @@
-import copy
 
 class Symbol:
 
-    #The symbol itself
-    symbolName = ''
-
     #Contruct a symbol from a string
     def __init__(self,symbolName):
-        
+
         #Check that the incoming variable is a string 
         if(isinstance(symbolName,str)):
             #Store the string 
@@ -37,13 +33,13 @@ class Symbol:
     def __str__(self):
         return self.symbolName
 
-
 class Equation:
 
-    coefficents = []
-    symbols = []
-
     def __init__(self,obj):
+        
+        self.coefficents = []
+        self.symbols = []
+        self.constant = 0
 
         #If the input is a list
         if(isinstance(obj,list)):
@@ -56,11 +52,14 @@ class Equation:
                     raise RuntimeError('Arg 1 must be a List of Symbols')
         
             #Passed the test we can safely copy and store
-            self.symbols = copy.deepcopy(obj)
+            self.symbols = obj
 
             #Each symbol gets
             for i in range(len(self.symbols)):
                 self.coefficents.append(1)
+        
+        if(isinstance(obj,int)):
+            self.constant = obj
         
         
 
@@ -81,7 +80,11 @@ class Equation:
             self.coefficents.append(1)
 
             return self
-
+        
+        #if the input is of type int
+        if(isinstance(obj,int)):
+            #increment the constant by the int given
+            self.constant = self.constant + obj
     
     def __str__(self):
         
@@ -100,6 +103,16 @@ class Equation:
                 eqStr = eqStr + str(currCoeff)
 
             eqStr = eqStr + str(currSym)
+        
+        #Will not print right if constant is the only term in Equation
+        if(self.constant != 0):
+
+            if(self.constant > 0):
+                eqStr = eqStr + '+'
+            else:
+                eqStr = eqStr + '-'
+            
+            eqStr = eqStr + str(abs(self.constant))
 
         return eqStr
                 
@@ -109,8 +122,10 @@ y = Symbol('y')
 p = Symbol('x')
 
 z = x + y
-print(z)
 z = p + z
 print(z)
 z = z + p
-print(z)
+
+i = Equation(1)
+print(p)
+print(p+i)
