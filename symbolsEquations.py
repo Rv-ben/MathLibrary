@@ -12,6 +12,7 @@ class Symbol:
             raise RuntimeError('Symbol must be a string')
 
     #Subject to change
+
     def __add__(self,obj):
         
         #If the input object is of type Symbol
@@ -30,6 +31,25 @@ class Symbol:
         if(isinstance(obj,int)):
 
             return Equation.fromEquationConstant(Equation([self]),obj)
+    
+    def __sub__(self,obj):
+        
+        #If the input object is of type Symbol
+        if(isinstance(obj,Symbol)):
+            
+            #Constuct and return an equation
+            return Equation.fromEquationSymbol(Equation([self]),obj,subtract=True)
+
+        #If the input object is of type Equation 
+        if(isinstance(obj,Equation)):
+            
+            #Invoke Equation __add__ , returns Equation
+            return Equation.fromEquationSymbol(obj,self,subtract=True)
+        
+        #if the input object is of type Equation
+        if(isinstance(obj,int)):
+
+            return Equation.fromEquationConstant(Equation([self]),1* obj)
     
     def __eq__(self,oSymbol):
         return self.symbolName == oSymbol.symbolName
@@ -80,7 +100,11 @@ class Equation:
 
             if(not symbolInEquation):
                 symbols.append(obj)
-                coefficents.append(1)
+                
+                if(not subtract):
+                    coefficents.append(1)
+                else:
+                    coefficents.append(-1)
         
             return cls(symbols,coefficents=coefficents,constant=constant)
  
@@ -111,6 +135,14 @@ class Equation:
         if(isinstance(obj,int)):
             return Equation.fromEquationConstant(self,obj)
     
+    def __sub__(self,obj):
+
+        if(isinstance(obj,Symbol)):
+            return Equation.fromEquationSymbol(self,obj,subtract=True)
+        
+        if(isinstance(obj,int)):
+            return Equation.fromEquationConstant(self,-1*obj)
+
     def __str__(self):
         
         eqStr = ''
@@ -120,9 +152,11 @@ class Equation:
             currSym = self.symbols[i]
             currCoeff = self.coefficents[i]
 
-            if(i > 0 and currCoeff > 0):
+            if(i > 0 and currCoeff >= 0):
                 
                 eqStr = eqStr + '+'
+            elif(i > 0  and currCoeff < 0):
+                eqStr = eqStr + '-'
 
             if(abs(currCoeff) != 1):
                 eqStr = eqStr + str(currCoeff)
@@ -159,3 +193,8 @@ o = p + i
 print(o+9) # x + 10
 print(p+i+9) # x + 10
 print(z+9) # 2x + y + 11
+r = Symbol('r')
+print(z - r)
+print(z - 9)
+print(x-y)
+print(x + y - p)
