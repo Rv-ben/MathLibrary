@@ -1,2 +1,2 @@
 # MathLibrary-
-A remaster of sympy for python
+My own take on the sympy library 
