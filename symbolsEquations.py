@@ -1,5 +1,4 @@
-import copy 
-import math
+import copy
 
 class Symbol:
 
@@ -17,12 +16,18 @@ class Symbol:
             raise RuntimeError('Symbol must be a string')
     
     #Subject to change
-    def __add__(self,oSymbol):
-
-        if(isinstance(oSymbol,Symbol)):
+    def __add__(self,obj):
+        
+        #If the input object is of type Symbol
+        if(isinstance(obj,Symbol)):
             
             #Constuct and return an equation
-            return Equation([self,oSymbol])
+            return Equation([self,obj])
+        
+        #If the input object is of type Equation 
+        if(isinstance(obj,Equation)):
+
+            obj + self
     
 
     def __eq__(self,oSymbol):
@@ -56,17 +61,18 @@ class Equation:
         for i in range(len(self.symbols)):
             self.coefficents.append(1)
 
-    def __add__(self,symbol):
+    def __add__(self,obj):
         
-        #For each symbol
-        for i in range(len(self.symbols)):
+        if(isinstance(obj,Symbol)):
+            #For each symbol
+            for i in range(len(self.symbols)):
+                
+                if(obj == self.symbols[i]):
+                    self.coefficents[i] = self.coefficents[i] + 1
+                    return None
             
-            if(symbol == self.symbols[i]):
-                self.coefficents[i] = self.coefficents[i] + 1
-                return None
-        
-        self.symbols.append(symbol)
-        self.coefficents.append(1)
+            self.symbols.append(obj)
+            self.coefficents.append(1)
 
     
     def __str__(self):
@@ -95,6 +101,8 @@ y = Symbol('y')
 p = Symbol('x')
 
 z = x + y
+print(z)
+p + z
 print(z)
 z + p
 print(z)
