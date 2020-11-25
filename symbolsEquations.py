@@ -10,7 +10,7 @@ class Symbol:
             self.symbolName = symbolName
         else:
             raise RuntimeError('Symbol must be a string')
-    
+
     #Subject to change
     def __add__(self,obj):
         
@@ -24,9 +24,13 @@ class Symbol:
         if(isinstance(obj,Equation)):
             
             #Invoke Equation __add__ , returns Equation
-            return obj + self
-    
+            return Equation.fromEquationSymbol(obj,self)
+        
+        #if the input object is of type Equation
+        if(isinstance(obj,int)):
 
+            return Equation.fromEquationConstant(Equation([self]),obj)
+    
     def __eq__(self,oSymbol):
         return self.symbolName == oSymbol.symbolName
     
@@ -35,56 +39,77 @@ class Symbol:
 
 class Equation:
 
-    def __init__(self,obj):
+    def __init__(self,symbols,coefficents = [], constant = 0):
         
-        self.coefficents = []
-        self.symbols = []
-        self.constant = 0
+        self.symbols = symbols
+        self.constant = constant
+        self.coefficents = coefficents
 
-        #If the input is a list
-        if(isinstance(obj,list)):
-            
-            #for all elements in list 
-            for x in obj:
-                
-                #if any element is not of type Symbol
-                if(not isinstance(x,Symbol)):
-                    raise RuntimeError('Arg 1 must be a List of Symbols')
-        
-            #Passed the test we can safely copy and store
-            self.symbols = obj
-
-            #Each symbol gets
-            for i in range(len(self.symbols)):
+        if(coefficents == []):
+            for i in range(len(symbols)):
                 self.coefficents.append(1)
+    
+    @classmethod
+    def fromEquationSymbol(cls,equation,obj,subtract = False):
         
+        symbols = []
+        coefficents = []
+        constant = 0
+
+        if(isinstance(equation,Equation) and isinstance(obj,Symbol)):
+            
+            symbolInEquation = False
+
+            #For each symbol
+            for i in range(len(equation.symbols)):
+                #Add each symbol to this equation
+                symbols.append(equation.symbols[i])
+                coefficents.append(equation.coefficents[i])
+
+                #if the incoming symbol is in the equation
+                if(not symbolInEquation and symbols[i] == obj):
+                    #increment the coresponding coefficent
+                    if(not subtract):
+                        coefficents[i] = coefficents[i] + 1
+                    else:
+                        coefficents[i] = coefficents[i] - 1
+                    
+                    symbolInEquation = True
+            
+            constant = equation.constant
+
+            if(not symbolInEquation):
+                symbols.append(obj)
+                coefficents.append(1)
+        
+            return cls(symbols,coefficents=coefficents,constant=constant)
+ 
+    @classmethod
+    def fromEquationConstant(cls,equation,obj):
+        
+        symbols = []
+        coefficents = []
+        constant = 0
+
         if(isinstance(obj,int)):
-            self.constant = obj
-        
-        
+            
+            #For each symbol
+            for i in range(len(equation.symbols)):
+                #Add each symbol to this equation
+                symbols.append(equation.symbols[i])
+                coefficents.append(equation.coefficents[i])
+            
+            constant = equation.constant + obj
+
+            return cls(symbols,coefficents=coefficents,constant=constant)
 
     def __add__(self,obj):
         
-        #if the input is of type Symbol
         if(isinstance(obj,Symbol)):
-            #For each symbol
-            for i in range(len(self.symbols)):
-                #Check if the symbol is already in the equation
-                if(obj == self.symbols[i]):
-                    #Increment coeffient if so
-                    self.coefficents[i] = self.coefficents[i] + 1
-                    return self
-            
-            #Append a new symbol
-            self.symbols.append(obj)
-            self.coefficents.append(1)
-
-            return self
+            return Equation.fromEquationSymbol(self,obj)
         
-        #if the input is of type int
         if(isinstance(obj,int)):
-            #increment the constant by the int given
-            self.constant = self.constant + obj
+            return Equation.fromEquationConstant(self,obj)
     
     def __str__(self):
         
@@ -122,10 +147,15 @@ y = Symbol('y')
 p = Symbol('x')
 
 z = x + y
-z = p + z
-print(z)
-z = z + p
+print(z) # x + y
 
-i = Equation(1)
-print(p)
-print(p+i)
+z = z + p 
+print(z) # 2x +y
+z = z + 2
+print(z+90) # 2x + y + 92
+print(z) # 2x + y + 2
+i = 1 
+o = p + i
+print(o+9) # x + 10
+print(p+i+9) # x + 10
+print(z+9) # 2x + y + 11
