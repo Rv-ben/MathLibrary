@@ -26,8 +26,9 @@ class Symbol:
         
         #If the input object is of type Equation 
         if(isinstance(obj,Equation)):
-
-            obj + self
+            
+            #Invoke Equation __add__ , returns Equation
+            return obj + self
     
 
     def __eq__(self,oSymbol):
@@ -65,16 +66,21 @@ class Equation:
 
     def __add__(self,obj):
         
+        #if the input is of type Symbol
         if(isinstance(obj,Symbol)):
             #For each symbol
             for i in range(len(self.symbols)):
-                
+                #Check if the symbol is already in the equation
                 if(obj == self.symbols[i]):
+                    #Increment coeffient if so
                     self.coefficents[i] = self.coefficents[i] + 1
-                    return None
+                    return self
             
+            #Append a new symbol
             self.symbols.append(obj)
             self.coefficents.append(1)
+
+            return self
 
     
     def __str__(self):
@@ -104,7 +110,7 @@ p = Symbol('x')
 
 z = x + y
 print(z)
-p + z
+z = p + z
 print(z)
-z + p
+z = z + p
 print(z)
