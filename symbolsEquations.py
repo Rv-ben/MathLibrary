@@ -42,24 +42,26 @@ class Equation:
     coefficents = []
     symbols = []
 
-    def __init__(self,symbols):
+    def __init__(self,obj):
 
         #If the input is a list
-        if(isinstance(symbols,list)):
+        if(isinstance(obj,list)):
             
             #for all elements in list 
-            for x in symbols:
+            for x in obj:
                 
                 #if any element is not of type Symbol
                 if(not isinstance(x,Symbol)):
                     raise RuntimeError('Arg 1 must be a List of Symbols')
         
-        #Passed the test we can safely copy and store
-        self.symbols = copy.deepcopy(symbols)
+            #Passed the test we can safely copy and store
+            self.symbols = copy.deepcopy(obj)
 
-        #Each symbol gets
-        for i in range(len(self.symbols)):
-            self.coefficents.append(1)
+            #Each symbol gets
+            for i in range(len(self.symbols)):
+                self.coefficents.append(1)
+        
+        
 
     def __add__(self,obj):
         
