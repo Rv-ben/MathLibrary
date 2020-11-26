@@ -12,7 +12,6 @@ class Symbol:
             raise RuntimeError('Symbol must be a string')
 
     #Subject to change
-
     def __add__(self,obj):
         
         #If the input object is of type Symbol
@@ -175,7 +174,7 @@ class Equation:
 
         return eqStr
                 
-
+'''
 x = Symbol('x')
 y = Symbol('y')
 p = Symbol('x')
@@ -198,3 +197,4 @@ print(z - r)
 print(z - 9)
 print(x-y)
 print(x + y - p)
+'''
